@@ -3,8 +3,6 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-mod merge_sorted_array;
-mod reverse_binary;
 
 use std::collections::BTreeMap;
 
