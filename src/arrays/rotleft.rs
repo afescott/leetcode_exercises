@@ -43,10 +43,10 @@ fn rotLeft(a: &[i32], d: i32) -> Vec<i32> {
 
     println!("{:?}", vals);
 
-    // a[4..] = [1, 2, 3, 4, 5]
+    // a[4..] → [5]
     let vals = &a[d..];
 
-    // a[4..] = [5]
+    // a[..4] → [1, 2, 3, 4]
     let vals_2 = &a[..d];
 
     println!("{:?}", vals);
