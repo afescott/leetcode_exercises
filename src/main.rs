@@ -6,75 +6,34 @@ use std::io::{self, BufRead};
  * The function accepts INTEGER_ARRAY q as parameter.
  */
 
-fn minimumBribes(q: &[i32]) {
-    //Functional attempt 1
-    /* // 1 2 3 4 5
-    // 2 1 5 3 4  = 3 bribes
-    let mut is_choatic = false;
-    let mut count = 0;
+#[derive(Debug)]
+pub struct Player {
+    pub name: String,
+    pub score: i32,
+}
 
-    for i in 0..q.len() - 1 {
-        if q[i] > q[i + 1] {
-            count += 1;
-            for j in i + 1..q.len() - 1 {
-                if q[i] > q[j + 1] {
-                    count += 1;
-                    if count > 2 {
-                        is_choatic = true;
-                    }
-                } else {
-                    break;
-                }
+pub struct Checker {
+    players: Vec<Player>,
+}
+
+impl Checker {
+    pub fn new(players: Vec<Player>) -> Self {
+        Checker { players }
+    }
+
+    pub fn check(&mut self) {
+        self.players.sort_by(|a, b| {
+            println!("a: {:?}, b:{:?}", a, b);
+            if a.score == b.score &&  {
+
             }
+            b.score.cmp(&a.score)
+        });
+
+        for player in &self.players {
+            println!("{} {}", player.name, player.score);
         }
     }
-
-    if is_choatic {
-        println!("Too chaotic");
-    } else {
-        println!("{}", count);
-    } */
-
-    //Attempt success 2
-    let mut count = 0;
-    let mut temp_count = 0;
-
-    // total bribes
-    for i in 0..q.len() {
-        for j in i + 1..q.len() {
-            if q[i] > q[j] {
-                temp_count += 1;
-                if temp_count > 2 {
-                    println!("Too chaotic");
-                    return;
-                }
-                count += 1;
-            }
-        }
-        temp_count = 0;
-    }
-
-    println!("{}", count);
-    /* // chaos check
-    for i in 0..q.len() {
-        if q[i] - 1 - i as i32 > 2 {
-            is_choatic = true;
-        }
-    } */
-
-    /* //Almost success attempt 3
-    let mut total = 0;
-    for i in 0..q.len() {
-        let bribes = q[i] - 1 - i as i32;
-        if bribes > 2 {
-            println!("Too chaotic");
-            return;
-        }
-        if bribes > 0 {
-            total += bribes;
-        }
-    }
-    println!("{}", total); */
 }
 
 fn main() {
@@ -89,24 +48,16 @@ fn main() {
         .parse::<i32>()
         .unwrap();
 
+    let mut players: Vec<Player> = Vec::new();
     for _ in 0..t {
-        let n = stdin_iterator
-            .next()
-            .unwrap()
-            .unwrap()
-            .trim()
-            .parse::<i32>()
-            .unwrap();
+        let line = stdin_iterator.next().unwrap().unwrap();
+        let mut parts = line.trim().split_whitespace();
+        let name = parts.next().unwrap().to_string();
+        let score = parts.next().unwrap().parse::<i32>().unwrap();
 
-        let q: Vec<i32> = stdin_iterator
-            .next()
-            .unwrap()
-            .unwrap()
-            .trim_end()
-            .split(' ')
-            .map(|s| s.to_string().parse::<i32>().unwrap())
-            .collect();
-
-        minimumBribes(&q);
+        players.push(Player { name, score });
     }
+
+    let mut checker = Checker::new(players);
+    checker.check();
 }
