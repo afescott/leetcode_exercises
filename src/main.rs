@@ -1,79 +1,69 @@
-use std::{
-    collections::{BTreeMap, HashMap},
-    io::{self, BufRead},
-};
+use std::collections::HashMap;
+use std::env;
+use std::fs::File;
+use std::io::{self, BufRead, Write};
 
 /*
- * Complete the 'checkMagazine' function below.
+ * Complete the 'sherlockAndAnagrams' function below.
  *
- * The function accepts following parameters:
- *  1. STRING_ARRAY magazine
- *  2. STRING_ARRAY note
+ * The function is expected to return an INTEGER.
+ * The function accepts STRING s as parameter.
  */
 
-fn checkMagazine(magazine: &[String], note: &[String]) {
-    let mut magazine_hashmap: HashMap<String, usize> = HashMap::new();
+fn sherlockAndAnagrams(s: &str) -> i32 {
+    let mut char_duplicates: HashMap<Vec<u8>, usize> = HashMap::new();
+    let mut vec = Vec::new();
+    for i in 0..s.len() {
+        for j in (i + 1)..=s.len() {
+            /*             let sub = &s[i..j]; */
+            // ...
+            // s[i..j] is a substring
 
-    for ele in magazine.iter().enumerate() {
-        magazine_hashmap
-            .entry(ele.1.to_string())
-            .and_modify(|e| *e += 1)
-            .or_insert(1);
-    }
+            vec.push(s[i..j].as_bytes());
 
-    let mut invalidated = false;
-    for ele in note.iter().enumerate() {
-        let res = magazine_hashmap.get_mut(ele.1);
-        if let Some(val) = res {
-            if val < &mut 1 {
-                invalidated = true;
-            }
-            *val -= 1;
-        } else {
-            invalidated = true;
+            let mut val = s[i..j].as_bytes().to_vec();
+            val.sort();
+
+            *char_duplicates.entry(val).or_insert(0) += 1;
         }
     }
 
-    if invalidated {
-        println!("No");
-    } else {
-        println!("Yes");
-    }
+    println!("{:?}", char_duplicates);
+
+    /* let duplicate_count = char_duplicates
+    .values()
+    .filter(|&&e| e > 1)
+    .collect::<Vec<usize>>(); */
+
+    char_duplicates
+        .values()
+        .map(|&n| {
+            let val = (n * (n - 1) / 2) as i32;
+            println!("{:?}", val);
+            val
+        })
+        .sum()
 }
 
 fn main() {
     let stdin = io::stdin();
     let mut stdin_iterator = stdin.lock().lines();
 
-    let first_multiple_input: Vec<String> = stdin_iterator
+    let mut fptr = File::create(env::var("OUTPUT_PATH").unwrap()).unwrap();
+
+    let q = stdin_iterator
         .next()
         .unwrap()
         .unwrap()
-        .split(' ')
-        .map(|s| s.to_string())
-        .collect();
+        .trim()
+        .parse::<i32>()
+        .unwrap();
 
-    let m = first_multiple_input[0].trim().parse::<i32>().unwrap();
+    for _ in 0..q {
+        let s = stdin_iterator.next().unwrap().unwrap();
 
-    let n = first_multiple_input[1].trim().parse::<i32>().unwrap();
+        let result = sherlockAndAnagrams(&s);
 
-    let magazine: Vec<String> = stdin_iterator
-        .next()
-        .unwrap()
-        .unwrap()
-        .trim_end()
-        .split(' ')
-        .map(|s| s.to_string())
-        .collect();
-
-    let note: Vec<String> = stdin_iterator
-        .next()
-        .unwrap()
-        .unwrap()
-        .trim_end()
-        .split(' ')
-        .map(|s| s.to_string())
-        .collect();
-
-    checkMagazine(&magazine, &note);
+        writeln!(&mut fptr, "{}", result).ok();
+    }
 }
