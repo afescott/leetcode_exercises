@@ -24,4 +24,4 @@ fn main() {
 
     println!("{:?}", val);
     assert_eq!(val, vec![1, 2]);
-}
+
