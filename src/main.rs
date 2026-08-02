@@ -1,4 +1,6 @@
-/*  Definition for a binary tree node. */
+use std::cell::RefCell;
+use std::rc::Rc;
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
     pub val: i32,
@@ -16,29 +18,23 @@ impl TreeNode {
         }
     }
 }
-
-use std::cell::RefCell;
-use std::collections::VecDeque;
-use std::rc::Rc;
-
-pub fn invert_tree(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> {
-    if let Some(root_val) = root {
-        let (left, right) = {
-            //Useful function below in future
-            /*             std::mem::swap(&mut val.left, &mut val.right); */
-            let mut val = root_val.borrow_mut();
-            let left = val.left.take();
-            let right = val.right.take();
-            // swap the links
-            val.left = right;
-            val.right = left;
-            (val.left.clone(), val.right.clone())
-        };
-        invert_tree(left);
-        invert_tree(right);
-        return Some(root_val.clone()); // ← here
+pub fn binary_tree_paths(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<String> {
+    let Some(node) = root else { return vec![] };
+    let n = node.borrow();
+    // leaf
+    if n.left.is_none() && n.right.is_none() {
+        return vec![n.val.to_string()];
     }
-    None
+    let mut out = Vec::new();
+    for path in binary_tree_paths(n.left.clone()) {
+        println!("path: {:?}, val: {:?}", path, n.val);
+        out.push(format!("{}->{}", n.val, path));
+    }
+    for path in binary_tree_paths(n.right.clone()) {
+        println!("{:?}", path);
+        out.push(format!("{}->{}", n.val, path));
+    }
+    out
 }
 
 fn main() {}

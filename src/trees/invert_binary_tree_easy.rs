@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::collections::VecDeque;
 use std::rc::Rc;
 
+/*  Definition for a binary tree node. */
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
     pub val: i32,
@@ -19,36 +20,23 @@ impl TreeNode {
         }
     }
 }
-//D- GRADE recursive better
-struct Solution;
 
-impl Solution {
-    pub fn invert_tree(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> {
-        if let Some(root) = root {
-            let root_borrow = root.borrow();
-            let mut rc = TreeNode::new(root.borrow().val);
-
-            root_borrow.left.iter().for_each(|tree_node| {
-                let mut temp = tree_node.borrow_mut();
-                let val = temp.left.clone();
-                temp.left = temp.right.clone();
-                temp.right = val;
-                drop(temp);
-                rc.right.insert(tree_node.clone());
-            });
-
-            root_borrow.right.iter().for_each(|tree_node| {
-                let mut temp = tree_node.borrow_mut();
-                let val = temp.right.clone();
-                temp.right = temp.left.clone();
-                temp.left = val;
-                drop(temp);
-                rc.left.insert(tree_node.clone());
-            });
-
-            return Some(Rc::new(rc.into()));
-        }
-
-        None
+pub fn invert_tree(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> {
+    if let Some(root_val) = root {
+        let (left, right) = {
+            //Useful function below in future
+            /*             std::mem::swap(&mut val.left, &mut val.right); */
+            let mut val = root_val.borrow_mut();
+            let left = val.left.take();
+            let right = val.right.take();
+            // swap the links
+            val.left = right;
+            val.right = left;
+            (val.left.clone(), val.right.clone())
+        };
+        invert_tree(left);
+        invert_tree(right);
+        return Some(root_val.clone()); // ← here
     }
+    None
 }
