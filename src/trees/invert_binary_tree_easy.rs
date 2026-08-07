@@ -28,6 +28,7 @@ pub fn invert_tree(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<Tre
             /*             std::mem::swap(&mut val.left, &mut val.right); */
             let mut val = root_val.borrow_mut();
             let left = val.left.take();
+
             let right = val.right.take();
             // swap the links
             val.left = right;
