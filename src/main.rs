@@ -4,21 +4,16 @@ impl Solution {
             return 0;
         }
 
-        for i in 0..haystack.len() {
-            let split = &haystack[i..haystack.len()];
-            let mut word = String::new();
-            let mut chars = needle.chars();
-            for ele in split.chars() {
-                let val = chars.next();
+        if needle.len() > haystack.len() {
+            return -1;
+        }
 
-                if val.is_some_and(|ch| ch == ele) {
-                    word.push(ele);
-                    if word == needle {
-                        return i.try_into().unwrap();
-                    }
-                } else {
-                    break;
-                }
+        //we only need to iterate h-n times otherwise the length of needle won't fit in latter end
+        //of haystack
+        for i in 0..=haystack.len() - needle.len() {
+            // needle = ll haystack = hello. 'he', 'el', 'll'
+            if &haystack[i..i + needle.len()] == needle {
+                return i as i32;
             }
         }
         -1
