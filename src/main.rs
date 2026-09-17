@@ -12,18 +12,23 @@ impl ListNode {
     }
 }
 
+pub struct Solution {}
+
 impl Solution {
-    pub fn reverse_list(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    pub fn reverse_list(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
         let mut prev: Option<Box<ListNode>> = None;
+        let mut curr = head;
 
-        let mut curr = head.take();
+        // eg 1,2,3,4,5
+        while let Some(mut node) = curr {
+            // node is 1
 
-        while curr.is_some() {
-            let mut curr = curr.take().unwrap();
-            let next_node = curr.next.take();
-            curr.next = prev.take();
-            prev = Some(curr);
-            curr = next_node.unwrap();
+            // curr becomes 2, so the loop can keep walking forward
+            curr = node.next.take();
+            // 1 now points back at whatever we already reversed
+            node.next = prev.take();
+            // 1 is the new head of the reversed part
+            prev = Some(node);
         }
 
         prev
